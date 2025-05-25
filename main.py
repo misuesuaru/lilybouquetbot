@@ -159,8 +159,8 @@ async def on_member_update(before, after):
                 await channel.send(embed=embed)
 
 
-import os
 
-TOKEN = os.getenv('DISCORD_TOKEN')  # Đảm bảo đã đặt biến môi trường này
+import os
+TOKEN = os.environ.get("DISCORD_TOKEN") # Đảm bảo đã đặt biến môi trường này
 keep_alive()    
 bot.run(TOKEN)
