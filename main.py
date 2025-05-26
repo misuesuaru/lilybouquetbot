@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 from discord import app_commands
-from typing import Optional
+from typing import Optional, Union
 import os
 import aiohttp
 from flask import Flask
@@ -49,7 +49,7 @@ async def on_ready():
 )
 async def say(
     interaction: discord.Interaction,
-    channel: discord.abc.Messageable,  # Hỗ trợ cả TextChannel lẫn Thread
+    channel: Union[discord.TextChannel, discord.Thread],
     message: Optional[str] = None,
     image: Optional[discord.Attachment] = None
 ):
@@ -65,13 +65,14 @@ async def say(
         await interaction.response.send_message("Bạn cần có vai trò **cao hơn bot** để dùng lệnh này.", ephemeral=True)
         return
 
-    # Không có gì để gửi
     if not message and not image:
         await interaction.response.send_message("Bạn cần nhập ít nhất nội dung hoặc ảnh.", ephemeral=True)
         return
 
-    # Gửi phản hồi tạm thời trước
-    await interaction.response.send_message(f"Đang gửi tới {channel.mention if hasattr(channel, 'mention') else 'chủ đề'}...", ephemeral=True)
+    await interaction.response.send_message(
+        f"Đang gửi tới {channel.mention if hasattr(channel, 'mention') else 'chủ đề'}...",
+        ephemeral=True
+    )
 
     try:
         if image and image.content_type and image.content_type.startswith("image/"):
