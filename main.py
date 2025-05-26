@@ -74,7 +74,49 @@ async def say(
     else:
         await channel.send(content=message)
 
-    
+@bot.tree.command(name="say_in_thread", description="Gửi tin vào một chủ đề cụ thể theo ID")
+@app_commands.describe(
+    thread_id="ID của chủ đề",
+    message="Nội dung cần gửi",
+    image="(Tùy chọn) Ảnh đính kèm"
+)
+async def say_in_thread(
+    interaction: discord.Interaction,
+    thread_id: str,
+    message: str,
+    image: Optional[discord.Attachment] = None
+):
+    guild = interaction.guild
+    user = guild.get_member(interaction.user.id)
+    bot_member = guild.me
+
+    # Kiểm tra vai trò
+    if user is None or bot_member is None:
+        await interaction.response.send_message("Không thể xác định vai trò.", ephemeral=True)
+        return
+
+    if user.top_role <= bot_member.top_role:
+        await interaction.response.send_message("Bạn cần có vai trò **cao hơn bot** để dùng lệnh này.", ephemeral=True)
+        return
+
+    # Tìm chủ đề theo ID
+    try:
+        thread = guild.get_thread(int(thread_id))
+    except ValueError:
+        await interaction.response.send_message("ID không hợp lệ.", ephemeral=True)
+        return
+
+    if thread is None:
+        await interaction.response.send_message("Không tìm thấy chủ đề có ID đó.", ephemeral=True)
+        return
+
+    await interaction.response.send_message(f"Đang gửi vào chủ đề **{thread.name}**...", ephemeral=True)
+
+    # Gửi nội dung và ảnh (nếu có)
+    if image and image.content_type and image.content_type.startswith("image/"):
+        await thread.send(content=message, file=await image.to_file())
+    else:
+        await thread.send(content=message)    
     
 
 @bot.event
