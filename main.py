@@ -101,7 +101,7 @@ async def on_member_join(member):
         role_mention = role_channel.mention if role_channel else "`role`"
 
         embed = discord.Embed(
-            title="👋 Chào mừng một đồng môn mới đã đặt chân vào lãnh địa!",
+            title=f"👋 Chào mừng một đồng môn mới **{member.display_name}** đã đặt chân vào lãnh địa!",
             description=(
                 f"{member.mention} đã tham gia server **{member.guild.name}**!\n\n"
                 "🌟 Nơi bạn có thể giao lưu với dàn nhân sự và fan của team chắc vậy.\n\n"
