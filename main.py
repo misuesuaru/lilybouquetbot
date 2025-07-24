@@ -144,45 +144,6 @@ async def on_member_remove(member):
 
         await channel.send(embed=embed)
 
-@bot.event
-async def on_member_update(before, after):
-    if not after.guild:
-        return
-    
-    # Tìm booster role bằng cách chính xác
-    booster_role = None
-    for role in after.guild.roles:
-        if role.is_premium_subscriber():
-            booster_role = role
-            break
-    
-    # Fallback: tìm theo tên phổ biến
-    if not booster_role:
-        possible_names = ["Server Booster", "Nitro Booster", "Booster"]
-        for name in possible_names:
-            booster_role = discord.utils.get(after.guild.roles, name=name)
-            if booster_role:
-                break
-    
-    if booster_role and booster_role not in before.roles and booster_role in after.roles:
-        channel = discord.utils.get(after.guild.text_channels, name='boost-server')
-        if channel:
-            try:
-                embed = discord.Embed(
-                    title="💎 BOOST SERVER!",
-                    description=(
-                        f"{after.mention}, cảm ơn bạn đã ủng hộ cho server **{after.guild.name}** của tụi mình! 💖"
-                    ),
-                    color=0xff99cc
-                )
-                embed.set_thumbnail(url=after.display_avatar.url)
-                embed.set_image(url="https://gifdb.com/images/thumbnail/thank-you-anime-girl-cute-dance-love-vjx4h36muzs0rps0.gif")
-                embed.set_footer(text="Cảm ơn vì sự ủng hộ của bạn!")
-                
-                await channel.send(embed=embed)
-            except Exception as e:
-                print(f"Error sending boost message: {e}")
-
 
 
 import os
