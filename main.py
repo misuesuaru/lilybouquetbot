@@ -7,24 +7,25 @@ import aiohttp
 from flask import Flask
 from threading import Thread
 
-# Flask server
+# 🟢 Flask server
 app = Flask('')
 
 @app.route('/')
 def home():
     return "Bot is running!"
 
-def run():
-    app.run(host='0.0.0.0', port=8080)
-
 def keep_alive():
+    def run():
+        app.run(host='0.0.0.0', port=8080)
     t = Thread(target=run)
     t.daemon = True
     t.start()
 
-# Discord bot
+# 🟢 Discord bot setup
 intents = discord.Intents.default()
 intents.members = True
+intents.message_content = True  # ✅ Bắt buộc để đọc nội dung tin nhắn
+
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
@@ -83,21 +84,12 @@ async def say(
     except Exception as e:
         await interaction.followup.send(f"Lỗi khi gửi tin nhắn: `{e}`", ephemeral=True)
 
-
-  
-    
-
 @bot.event
 async def on_member_join(member):
     channel = discord.utils.get(member.guild.text_channels, name='hello-goodbye')
     role_channel = discord.utils.get(member.guild.text_channels, name='role')  # Tên kênh chọn role
 
-    if member.bot:
-        role = discord.utils.get(member.guild.roles, name="Bot")
-        if role:
-            await member.add_roles(role)
-
-    elif channel:
+    if channel:
         role_mention = role_channel.mention if role_channel else "`role`"
 
         embed = discord.Embed(
@@ -118,7 +110,6 @@ async def on_member_join(member):
         embed.set_image(url="https://get.wallhere.com/photo/anime-anime-girls-sky-clouds-school-uniform-Yuru-Yuri-Akaza-Akari-Yoshikawa-Chinatsu-Funami-Yui-Toshinou-Kyouko-cloud-screenshot-extreme-sport-250233.jpg")
 
         await channel.send(embed=embed)
-
 
 @bot.event
 async def on_member_remove(member):
@@ -144,9 +135,7 @@ async def on_member_remove(member):
 
         await channel.send(embed=embed)
 
-
-
-import os
-TOKEN = os.environ.get("DISCORD_TOKEN") # Đảm bảo đã đặt biến môi trường này
-keep_alive()    
+# 🟢 Khởi động bot
+TOKEN = os.environ.get("DISCORD_TOKEN")  # Đảm bảo đã đặt biến môi trường này
+keep_alive()
 bot.run(TOKEN)
