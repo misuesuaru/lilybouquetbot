@@ -73,28 +73,26 @@ async def say(
     # ✅ Giữ tương tác sống
     await interaction.response.defer(ephemeral=True)
 
-    # ✅ Gửi trạng thái tạm thời
-    status_msg = await interaction.followup.send("⏳ Đang gửi nội dung...", ephemeral=True)
-
     try:
         if image:
             if image.size > 8 * 1024 * 1024:
-                await status_msg.edit(content="❌ Ảnh vượt quá giới hạn 8MB.")
+                await interaction.followup.send("❌ Ảnh vượt quá giới hạn 8MB.", ephemeral=True)
                 return
 
             if image.content_type and image.content_type.startswith("image/"):
                 file = await image.to_file()
                 await channel.send(content=message, file=file)
             else:
-                await status_msg.edit(content="❌ File không phải ảnh hợp lệ.")
+                await interaction.followup.send("❌ File không phải ảnh hợp lệ.", ephemeral=True)
                 return
         else:
             await channel.send(content=message)
 
-        await status_msg.edit(content="✅ Đã gửi thành công!")
+        await interaction.followup.send("✅ Đã gửi thành công!", ephemeral=True)
 
     except Exception as e:
-        await status_msg.edit(content=f"❌ Lỗi khi gửi: `{e}`")
+        await interaction.followup.send(f"❌ Lỗi khi gửi: `{e}`", ephemeral=True)
+
 
 
 @bot.event
