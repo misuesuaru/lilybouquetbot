@@ -70,19 +70,32 @@ async def say(
         await interaction.response.send_message("Bạn cần nhập ít nhất nội dung hoặc ảnh.", ephemeral=True)
         return
 
-    await interaction.response.send_message(
-        f"Đang gửi tới {channel.mention if hasattr(channel, 'mention') else 'chủ đề'}...",
-        ephemeral=True
-    )
+    # ✅ Giữ tương tác sống
+    await interaction.response.defer(ephemeral=True)
+
+    # ✅ Gửi trạng thái tạm thời
+    status_msg = await interaction.followup.send("⏳ Đang gửi nội dung...", ephemeral=True)
 
     try:
-        if image and image.content_type and image.content_type.startswith("image/"):
-            file = await image.to_file()
-            await channel.send(content=message, file=file)
+        if image:
+            if image.size > 8 * 1024 * 1024:
+                await status_msg.edit(content="❌ Ảnh vượt quá giới hạn 8MB.")
+                return
+
+            if image.content_type and image.content_type.startswith("image/"):
+                file = await image.to_file()
+                await channel.send(content=message, file=file)
+            else:
+                await status_msg.edit(content="❌ File không phải ảnh hợp lệ.")
+                return
         else:
             await channel.send(content=message)
+
+        await status_msg.edit(content="✅ Đã gửi thành công!")
+
     except Exception as e:
-        await interaction.followup.send(f"Lỗi khi gửi tin nhắn: `{e}`", ephemeral=True)
+        await status_msg.edit(content=f"❌ Lỗi khi gửi: `{e}`")
+
 
 @bot.event
 async def on_member_join(member):
