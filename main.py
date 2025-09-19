@@ -42,7 +42,7 @@ async def on_ready():
     except Exception as e:
         print(f"Error syncing: {e}")
 
-@bot.tree.command(name="say", description="Bot sẽ gửi nội dung hoặc ảnh (hoặc cả hai) vào kênh hoặc chủ đề được chọn")
+@bot.tree.command(name="say", description="Lily sẽ gửi nội dung hoặc ảnh (hoặc cả hai) vào kênh hoặc chủ đề được chọn")
 @app_commands.describe(
     channel="Kênh văn bản hoặc chủ đề cần gửi tin",
     message="(Tùy chọn) Nội dung tin nhắn",
@@ -59,15 +59,15 @@ async def say(
     bot_member = guild.me
 
     if user is None or bot_member is None:
-        await interaction.response.send_message("Không thể xác định vai trò của bạn hoặc bot.", ephemeral=True)
+        await interaction.response.send_message("Không thể xác định vai trò của ngài~", ephemeral=True)
         return
 
     if user.top_role <= bot_member.top_role:
-        await interaction.response.send_message("Bạn cần có vai trò **cao hơn bot** để dùng lệnh này.", ephemeral=True)
+        await interaction.response.send_message("Ngài phải mạnh hơn nữa để sai khiến Lily~", ephemeral=True)
         return
 
     if not message and not image:
-        await interaction.response.send_message("Bạn cần nhập ít nhất nội dung hoặc ảnh.", ephemeral=True)
+        await interaction.response.send_message("Ngài cần nhập tin nhắn hoặc thả ảnh nữa~", ephemeral=True)
         return
 
     # ✅ Giữ tương tác sống
@@ -88,7 +88,7 @@ async def say(
         else:
             await channel.send(content=message)
 
-        await interaction.followup.send("✅ Đã gửi thành công!", ephemeral=True)
+        await interaction.followup.send("✅Lily đã làm theo lời của ngài~!", ephemeral=True)
 
     except Exception as e:
         await interaction.followup.send(f"❌ Lỗi khi gửi: `{e}`", ephemeral=True)
