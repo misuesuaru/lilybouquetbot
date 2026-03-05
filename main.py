@@ -4,23 +4,7 @@ from discord import app_commands
 from typing import Optional, Union
 import os
 import aiohttp
-from flask import Flask
 from threading import Thread
-
-# 🟢 Flask server
-app = Flask('')
-
-@app.route('/')
-def home():
-    return "Bot is running!"
-
-def keep_alive():
-    def run():
-        port = int(os.environ.get("PORT", 8080))
-        app.run(host='0.0.0.0', port=port)
-    t = Thread(target=run)
-    t.daemon = True
-    t.start()
 
 # 🟢 Discord bot setup
 intents = discord.Intents.default()
@@ -149,5 +133,4 @@ async def on_member_remove(member):
 
 # 🟢 Khởi động bot
 TOKEN = os.environ.get("DISCORD_TOKEN")  # Đảm bảo đã đặt biến môi trường này
-keep_alive()
 bot.run(TOKEN)
